@@ -46,14 +46,14 @@ func NewJob(ctx *workflow.Ctx, plugins map[string]interface{}) workflow.Job {
 func (j *Job) AliyunPopPlugin(detail *JobDetail) (err error) {
 	ak, ok := detail.Params["accessKeyID"]
 	if !ok || ak == "" {
-		ak, err = j.ctx.Get("accessKeyID")
+		ak, err = j.ctx.Get("global.accessKeyID")
 		if err != nil {
 			return err
 		}
 	}
 	sk, ok := detail.Params["accessKeyID"]
 	if !ok || sk == "" {
-		sk, err = j.ctx.Get("accessKeySecret")
+		sk, err = j.ctx.Get("global.accessKeySecret")
 		if err != nil {
 			return err
 		}

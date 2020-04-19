@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hatlonely/alicli/internal/workflow"
 	"github.com/hpifu/go-kit/hconf"
 	"github.com/hpifu/go-kit/hflag"
+
+	"github.com/hatlonely/alicli/internal/http"
+	"github.com/hatlonely/alicli/internal/workflow"
 )
 
 var AppVersion = "unknown"
-
 
 type Options struct {
 	CtxFile string `hflag:"--ctx-file, -c; usage: context file path"`
@@ -45,5 +46,19 @@ func main() {
 	ctx := workflow.NewCtx()
 	for k, v := range kvs {
 		ctx.Set(fmt.Sprintf("global.%v", k), v)
+	}
+
+	workConfig, err := hconf.New("yaml", "local", options.WorkFile)
+	if err != nil {
+		panic(err)
+	}
+	workflow.Register("http", http.NewJob)
+	wf := workflow.NewWorkFlow(ctx)
+	flows, err := workConfig.Get("workflow")
+	if err != nil {
+		panic(err)
+	}
+	if err := wf.Run(flows.([]interface{})); err != nil {
+		panic(err)
 	}
 }
