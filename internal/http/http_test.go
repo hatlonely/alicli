@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hatlonely/alicli/internal/workflow"
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/hatlonely/alicli/internal/workflow"
 )
 
 func TestHttpJob_Do(t *testing.T) {
@@ -51,21 +52,6 @@ func TestWorkFlow(t *testing.T) {
 					},
 				},
 			},
-			//map[interface{}]interface{}{
-			//	"description": "测试 http",
-			//	"type":        "http",
-			//	"detail": map[interface{}]interface{}{
-			//		"method": "POST",
-			//		"url":    "http://www.baidu.com/s",
-			//		"header": map[string]interface{}{
-			//			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
-			//		},
-			//		"params": map[interface{}]interface{}{
-			//			"wd": "golang",
-			//		},
-			//		"form": map[interface{}]interface{}{},
-			//	},
-			//},
 		})
 		So(err, ShouldBeNil)
 	})

@@ -1,0 +1,100 @@
+workflow:
+  - description: 获取 table 元信息
+    type: ots
+    detail:
+      client:
+        endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
+        instance: hatlonely-ots-sh
+        accessKeyID: "{{global.accessKeyID}}"
+        accessKeySecret: "{{global.accessKeySecret}}"
+      method: DescribeTable
+      params:
+        tableName: mysampletable
+  - description: 插入
+    type: ots
+    detail:
+      client:
+        endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
+        instance: hatlonely-ots-sh
+        accessKeyID: "{{global.accessKeyID}}"
+        accessKeySecret: "{{global.accessKeySecret}}"
+      method: PutRow
+      params:
+        putRowChange:
+          tableName: mysampletable
+          primaryKey:
+            primaryKeys:
+              - columnName: uid
+                value: "86"
+              - columnName: pid
+                value: "{{type.int64(6775)}}"
+          columns:
+            - columnName: name
+              value: hatlonely
+            - columnName: country
+              value: china
+          condition:
+            rowExistenceExpectation: 0
+  - description: 查询
+    type: ots
+    detail:
+      client:
+        endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
+        instance: hatlonely-ots-sh
+        accessKeyID: "{{global.accessKeyID}}"
+        accessKeySecret: "{{global.accessKeySecret}}"
+      method: GetRow
+      params:
+        singleRowQueryCriteria:
+          tableName: mysampletable
+          primaryKey:
+            primaryKeys:
+              - columnName: uid
+                value: "86"
+              - columnName: pid
+                value: "{{type.int64(6775)}}"
+          maxVersion: 1
+  - description: 更新
+    type: ots
+    detail:
+      client:
+        endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
+        instance: hatlonely-ots-sh
+        accessKeyID: "{{global.accessKeyID}}"
+        accessKeySecret: "{{global.accessKeySecret}}"
+      method: UpdateRow
+      params:
+        updateRowChange:
+          tableName: mysampletable
+          primaryKey:
+            primaryKeys:
+              - columnName: uid
+                value: "86"
+              - columnName: pid
+                value: "{{type.int64(6775)}}"
+          columns:
+            - columnName: name
+              value: playjokes
+            - columnName: country
+              value: china
+          condition:
+            rowExistenceExpectation: 1
+  - description: 查询
+    type: ots
+    detail:
+      client:
+        endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
+        instance: hatlonely-ots-sh
+        accessKeyID: "{{global.accessKeyID}}"
+        accessKeySecret: "{{global.accessKeySecret}}"
+      method: GetRow
+      params:
+        singleRowQueryCriteria:
+          tableName: mysampletable
+          primaryKey:
+            primaryKeys:
+              - columnName: uid
+                value: "86"
+              - columnName: pid
+                value: "{{type.int64(6775)}}"
+          maxVersion: 1

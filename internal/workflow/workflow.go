@@ -2,6 +2,8 @@ package workflow
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/hpifu/go-kit/href"
 	"github.com/hpifu/go-kit/hstr"
@@ -31,6 +33,67 @@ type Job interface {
 
 var GreenTxt = hstr.NewFontStyle(hstr.ForegroundGreen)
 
+func (w *WorkFlow) Evaluate(data *interface{}) (interface{}, error) {
+	switch (*data).(type) {
+	case string:
+		v := (*data).(string)
+		if strings.HasPrefix(v, "{{") && strings.HasSuffix(v, "}}") {
+			text := v[2 : len(v)-2]
+			if strings.HasPrefix(text, "type.int64(") {
+				val, err := strconv.ParseInt(text[11:len(text)-1], 10, 64)
+				if err != nil {
+					return nil, err
+				}
+				*data = val
+			} else {
+				key := strings.TrimSpace(text)
+				val, err := w.ctx.Get(key)
+				if err != nil {
+					return nil, err
+				}
+				*data = val
+			}
+		}
+	case map[string]interface{}:
+		for k, v := range (*data).(map[string]interface{}) {
+			if val, err := w.Evaluate(&v); err != nil {
+				return nil, err
+			} else {
+				(*data).(map[string]interface{})[k] = val
+			}
+		}
+	case map[interface{}]interface{}:
+		for k, v := range (*data).(map[interface{}]interface{}) {
+			if val, err := w.Evaluate(&v); err != nil {
+				return nil, err
+			} else {
+				(*data).(map[interface{}]interface{})[k] = val
+			}
+		}
+	case []string:
+		for i, v := range (*data).([]string) {
+			var vi interface{}
+			vi = v
+			if val, err := w.Evaluate(&vi); err != nil {
+				return nil, err
+			} else {
+				(*data).([]interface{})[i] = val
+			}
+		}
+	case []interface{}:
+		for i, v := range (*data).([]interface{}) {
+			if val, err := w.Evaluate(&v); err != nil {
+				return nil, err
+			} else {
+				(*data).([]interface{})[i] = val
+			}
+		}
+	default:
+	}
+
+	return *data, nil
+}
+
 func (w *WorkFlow) Run(vs []interface{}) error {
 	for _, v := range vs {
 		info := &JobInfo{}
@@ -43,6 +106,9 @@ func (w *WorkFlow) Run(vs []interface{}) error {
 		}
 		fmt.Println(info.Description)
 		fmt.Println(hstr.Indent("  ", info.Type))
+		if _, err := w.Evaluate(&info.Detail); err != nil {
+			panic(err)
+		}
 		fmt.Println(hstr.Indent("    ", "Detail"))
 		fmt.Println(hstr.Indent("      ", hstr.ToYamlString(info.Detail)))
 		res, err := job.Do(info.Detail)

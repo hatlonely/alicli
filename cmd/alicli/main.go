@@ -8,13 +8,14 @@ import (
 	"github.com/hpifu/go-kit/hflag"
 
 	"github.com/hatlonely/alicli/internal/http"
+	"github.com/hatlonely/alicli/internal/ots"
 	"github.com/hatlonely/alicli/internal/workflow"
 )
 
 var AppVersion = "unknown"
 
 type Options struct {
-	CtxFile string `hflag:"--ctx-file, -c; usage: context file path"`
+	CtxFile  string `hflag:"--ctx-file, -c; usage: context file path"`
 	WorkFile string `hflag:"--work-file, -w; required; usage: work file path"`
 }
 
@@ -53,6 +54,7 @@ func main() {
 		panic(err)
 	}
 	workflow.Register("http", http.NewJob)
+	workflow.Register("ots", ots.NewJob)
 	wf := workflow.NewWorkFlow(ctx)
 	flows, err := workConfig.Get("workflow")
 	if err != nil {
