@@ -10,12 +10,12 @@ import (
 	"github.com/hpifu/go-kit/hstr"
 )
 
-type WorkFlow struct {
+type Workflow struct {
 	ctx   *Ctx
 	flows []interface{}
 }
 
-func NewWorkflow(global interface{}, define interface{}, workflow interface{}) (*WorkFlow, error) {
+func NewWorkflow(global interface{}, define interface{}, workflow interface{}) (*Workflow, error) {
 	ctx := NewCtx()
 	if err := ctx.Set("global", global); err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func NewWorkflow(global interface{}, define interface{}, workflow interface{}) (
 	if err := ctx.Set("define", define); err != nil {
 		return nil, err
 	}
-	w := &WorkFlow{ctx: ctx}
+	w := &Workflow{ctx: ctx}
 	if _, err := w.Evaluate(&define); err != nil {
 		return nil, err
 	}
@@ -34,12 +34,6 @@ func NewWorkflow(global interface{}, define interface{}, workflow interface{}) (
 	}
 
 	return w, nil
-}
-
-func NewWorkFlow(ctx *Ctx) *WorkFlow {
-	return &WorkFlow{
-		ctx: ctx,
-	}
 }
 
 type JobInfo struct {
@@ -56,7 +50,7 @@ type Job interface {
 
 var GreenTxt = hstr.NewFontStyle(hstr.ForegroundGreen)
 
-func (w *WorkFlow) Evaluate(data *interface{}) (interface{}, error) {
+func (w *Workflow) Evaluate(data *interface{}) (interface{}, error) {
 	switch (*data).(type) {
 	case string:
 		v := (*data).(string)
@@ -117,7 +111,7 @@ func (w *WorkFlow) Evaluate(data *interface{}) (interface{}, error) {
 	return *data, nil
 }
 
-func (w *WorkFlow) Run() error {
+func (w *Workflow) Run() error {
 	for _, v := range w.flows {
 		info := &JobInfo{}
 		if err := href.InterfaceToStruct(v, info); err != nil {
@@ -159,7 +153,7 @@ func init() {
 	Register("echo", NewEchoJob)
 }
 
-func (w *WorkFlow) CreateJob(info *JobInfo) Job {
+func (w *Workflow) CreateJob(info *JobInfo) Job {
 	if constructor, ok := typeJobMap[info.Type]; ok {
 		return constructor(w.ctx, info.Plugins)
 	}

@@ -9,13 +9,14 @@ import (
 
 func TestWorkFlow_Evaluate(t *testing.T) {
 	Convey("test evaluate", t, func() {
-		ctx := NewCtx()
-		ctx.Set("global.accessKeyID", "access key")
-		ctx.Set("global.Infos", map[string]interface{}{
-			"key1": "val1",
-			"key2": 2,
-		})
-		w := NewWorkFlow(ctx)
+		w, err := NewWorkflow(map[string]interface{}{
+			"accessKeyID": "access key",
+			"Infos": map[string]interface{}{
+				"key1": "val1",
+				"key2": 2,
+			},
+		}, nil, nil)
+		So(err, ShouldBeNil)
 
 		mystruct := map[string]interface{}{
 			"obj1": map[interface{}]interface{}{
@@ -35,10 +36,7 @@ func TestWorkFlow_Evaluate(t *testing.T) {
 
 func TestWorkFlow(t *testing.T) {
 	Convey("case 1", t, func() {
-		ctx := &Ctx{}
-		w := NewWorkFlow(ctx)
-
-		err := w.Run([]interface{}{
+		w, err := NewWorkflow(nil, nil, []interface{}{
 			map[interface{}]interface{}{
 				"description": "测试 echo",
 				"type":        "echo",
@@ -56,6 +54,8 @@ func TestWorkFlow(t *testing.T) {
 				},
 			},
 		})
+
 		So(err, ShouldBeNil)
+		So(w.Run(), ShouldBeNil)
 	})
 }
