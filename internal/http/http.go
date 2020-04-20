@@ -16,6 +16,7 @@ import (
 	"github.com/hpifu/go-kit/href"
 	"github.com/spf13/cast"
 
+	"github.com/hatlonely/alicli/internal/ctx"
 	"github.com/hatlonely/alicli/internal/workflow"
 )
 
@@ -24,7 +25,7 @@ func init() {
 }
 
 type Job struct {
-	ctx     *workflow.Ctx
+	ctx     *ctx.Ctx
 	plugins map[string]interface{}
 }
 
@@ -36,7 +37,7 @@ type JobDetail struct {
 	Form   map[string]string
 }
 
-func NewJob(ctx *workflow.Ctx, plugins map[string]interface{}) workflow.Job {
+func NewJob(ctx *ctx.Ctx, plugins map[string]interface{}) workflow.Job {
 	return &Job{
 		ctx:     ctx,
 		plugins: plugins,

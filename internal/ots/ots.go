@@ -6,11 +6,12 @@ import (
 	"github.com/aliyun/aliyun-tablestore-go-sdk/tablestore"
 	"github.com/hpifu/go-kit/href"
 
+	"github.com/hatlonely/alicli/internal/ctx"
 	"github.com/hatlonely/alicli/internal/workflow"
 )
 
 type Job struct {
-	ctx     *workflow.Ctx
+	ctx     *ctx.Ctx
 	plugins map[string]interface{}
 }
 
@@ -27,7 +28,7 @@ type JobDetail struct {
 	Params interface{}
 }
 
-func NewJob(ctx *workflow.Ctx, plugins map[string]interface{}) workflow.Job {
+func NewJob(ctx *ctx.Ctx, plugins map[string]interface{}) workflow.Job {
 	return &Job{
 		ctx:     ctx,
 		plugins: plugins,

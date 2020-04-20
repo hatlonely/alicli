@@ -8,22 +8,24 @@ import (
 
 	"github.com/hpifu/go-kit/href"
 	"github.com/hpifu/go-kit/hstr"
+
+	"github.com/hatlonely/alicli/internal/ctx"
 )
 
 type Workflow struct {
-	ctx   *Ctx
+	ctx   *ctx.Ctx
 	flows []interface{}
 }
 
 func NewWorkflow(global interface{}, define interface{}, workflow interface{}) (*Workflow, error) {
-	ctx := NewCtx()
-	if err := ctx.Set("global", global); err != nil {
+	nc := ctx.NewCtx()
+	if err := nc.Set("global", global); err != nil {
 		return nil, err
 	}
-	if err := ctx.Set("define", define); err != nil {
+	if err := nc.Set("define", define); err != nil {
 		return nil, err
 	}
-	w := &Workflow{ctx: ctx}
+	w := &Workflow{ctx: nc}
 	if _, err := w.Evaluate(&define); err != nil {
 		return nil, err
 	}
@@ -141,16 +143,12 @@ func (w *Workflow) Run() error {
 	return nil
 }
 
-type JobGenerator func(ctx *Ctx, plugins map[string]interface{}) Job
+type JobGenerator func(nc *ctx.Ctx, plugins map[string]interface{}) Job
 
 var typeJobMap = map[string]JobGenerator{}
 
 func Register(typename string, generator JobGenerator) {
 	typeJobMap[typename] = generator
-}
-
-func init() {
-	Register("echo", NewEchoJob)
 }
 
 func (w *Workflow) CreateJob(info *JobInfo) Job {
