@@ -19,6 +19,11 @@ type Options struct {
 	WorkFile string `hflag:"--work-file, -w; required; usage: work file path"`
 }
 
+func init() {
+	workflow.Register("http", http.NewJob)
+	workflow.Register("ots", ots.NewJob)
+}
+
 func main() {
 	version := hflag.Bool("v", false, "print current version")
 	options := &Options{}
@@ -39,28 +44,27 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	kvs := map[string]string{}
-	if err := ctxConfig.Unmarshal(&kvs); err != nil {
-		panic(err)
-	}
-
-	ctx := workflow.NewCtx()
-	for k, v := range kvs {
-		ctx.Set(fmt.Sprintf("global.%v", k), v)
-	}
-
 	workConfig, err := hconf.New("yaml", "local", options.WorkFile)
 	if err != nil {
 		panic(err)
 	}
-	workflow.Register("http", http.NewJob)
-	workflow.Register("ots", ots.NewJob)
-	wf := workflow.NewWorkFlow(ctx)
+	define, err := workConfig.Get("define")
+	if err != nil {
+		panic(err)
+	}
 	flows, err := workConfig.Get("workflow")
 	if err != nil {
 		panic(err)
 	}
-	if err := wf.Run(flows.([]interface{})); err != nil {
+	global, err := ctxConfig.Get("")
+	if err != nil {
+		panic(err)
+	}
+	wf, err := workflow.NewWorkflow(global, define, flows)
+	if err != nil {
+		panic(err)
+	}
+	if err := wf.Run(); err != nil {
 		panic(err)
 	}
 }

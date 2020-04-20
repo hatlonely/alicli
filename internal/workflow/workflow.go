@@ -1,6 +1,7 @@
 package workflow
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -10,7 +11,29 @@ import (
 )
 
 type WorkFlow struct {
-	ctx *Ctx
+	ctx   *Ctx
+	flows []interface{}
+}
+
+func NewWorkflow(global interface{}, define interface{}, workflow interface{}) (*WorkFlow, error) {
+	ctx := NewCtx()
+	if err := ctx.Set("global", global); err != nil {
+		return nil, err
+	}
+	if err := ctx.Set("define", define); err != nil {
+		return nil, err
+	}
+	w := &WorkFlow{ctx: ctx}
+	if _, err := w.Evaluate(&define); err != nil {
+		return nil, err
+	}
+
+	var ok bool
+	if w.flows, ok = workflow.([]interface{}); !ok {
+		return nil, errors.New("workflow is not []interface{}")
+	}
+
+	return w, nil
 }
 
 func NewWorkFlow(ctx *Ctx) *WorkFlow {
@@ -94,8 +117,8 @@ func (w *WorkFlow) Evaluate(data *interface{}) (interface{}, error) {
 	return *data, nil
 }
 
-func (w *WorkFlow) Run(vs []interface{}) error {
-	for _, v := range vs {
+func (w *WorkFlow) Run() error {
+	for _, v := range w.flows {
 		info := &JobInfo{}
 		if err := href.InterfaceToStruct(v, info); err != nil {
 			return err

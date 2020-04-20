@@ -1,23 +1,22 @@
+define:
+  otsclient:
+    endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
+    instance: hatlonely-ots-sh
+    accessKeyID: "{{global.accessKeyID}}"
+    accessKeySecret: "{{global.accessKeySecret}}"
+
 workflow:
   - description: 获取 table 元信息
     type: ots
     detail:
-      client:
-        endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
-        instance: hatlonely-ots-sh
-        accessKeyID: "{{global.accessKeyID}}"
-        accessKeySecret: "{{global.accessKeySecret}}"
+      client: "{{define.otsclient}}"
       method: DescribeTable
       params:
         tableName: mysampletable
   - description: 插入
     type: ots
     detail:
-      client:
-        endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
-        instance: hatlonely-ots-sh
-        accessKeyID: "{{global.accessKeyID}}"
-        accessKeySecret: "{{global.accessKeySecret}}"
+      client: "{{define.otsclient}}"
       method: PutRow
       params:
         putRowChange:
@@ -38,11 +37,7 @@ workflow:
   - description: 查询
     type: ots
     detail:
-      client:
-        endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
-        instance: hatlonely-ots-sh
-        accessKeyID: "{{global.accessKeyID}}"
-        accessKeySecret: "{{global.accessKeySecret}}"
+      client: "{{define.otsclient}}"
       method: GetRow
       params:
         singleRowQueryCriteria:
@@ -57,11 +52,7 @@ workflow:
   - description: 更新
     type: ots
     detail:
-      client:
-        endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
-        instance: hatlonely-ots-sh
-        accessKeyID: "{{global.accessKeyID}}"
-        accessKeySecret: "{{global.accessKeySecret}}"
+      client: "{{define.otsclient}}"
       method: UpdateRow
       params:
         updateRowChange:
@@ -82,11 +73,7 @@ workflow:
   - description: 查询
     type: ots
     detail:
-      client:
-        endpoint: https://hatlonely-ots-sh.cn-shanghai.ots.aliyuncs.com
-        instance: hatlonely-ots-sh
-        accessKeyID: "{{global.accessKeyID}}"
-        accessKeySecret: "{{global.accessKeySecret}}"
+      client: "{{define.otsclient}}"
       method: GetRow
       params:
         singleRowQueryCriteria:
