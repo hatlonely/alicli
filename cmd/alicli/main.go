@@ -7,6 +7,7 @@ import (
 	"github.com/hpifu/go-kit/hconf"
 	"github.com/hpifu/go-kit/hflag"
 
+	"github.com/hatlonely/alicli/internal/ctx"
 	"github.com/hatlonely/alicli/internal/http"
 	"github.com/hatlonely/alicli/internal/ots"
 	"github.com/hatlonely/alicli/internal/workflow"
@@ -20,8 +21,19 @@ type Options struct {
 }
 
 func init() {
+	NewHTTPJobWithAliyunPOP := func(ctx *ctx.Ctx, plugins map[string]interface{}) workflow.Job {
+		job := http.NewJob(ctx, plugins)
+		hjob := job.(*http.Job)
+		hjob.AddPlugin("aliyunpop", nil)
+		return hjob
+	}
+
 	workflow.Register("http", http.NewJob)
 	workflow.Register("ots", ots.NewJob)
+	workflow.Register("imm", NewHTTPJobWithAliyunPOP)
+	workflow.Register("kms", NewHTTPJobWithAliyunPOP)
+	workflow.Register("ecs", NewHTTPJobWithAliyunPOP)
+	workflow.Register("nas", NewHTTPJobWithAliyunPOP)
 }
 
 func main() {

@@ -80,7 +80,7 @@ func (w *Workflow) Run() error {
 	return nil
 }
 
-type JobGenerator func(nc *ctx.Ctx, plugins map[string]interface{}) Job
+type JobGenerator func(ctx *ctx.Ctx, plugins map[string]interface{}) Job
 
 var typeJobMap = map[string]JobGenerator{}
 

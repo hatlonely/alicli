@@ -44,6 +44,13 @@ func NewJob(ctx *ctx.Ctx, plugins map[string]interface{}) workflow.Job {
 	}
 }
 
+func (j *Job) AddPlugin(name string, params interface{}) {
+	if j.plugins == nil {
+		j.plugins = map[string]interface{}{}
+	}
+	j.plugins[name] = params
+}
+
 func (j *Job) AliyunPopPlugin(detail *JobDetail) (err error) {
 	ak, ok := detail.Params["accessKeyID"]
 	if !ok || ak == "" {
