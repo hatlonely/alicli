@@ -1,6 +1,7 @@
 package ctx
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -31,6 +32,22 @@ func (c *Ctx) Set(key string, val interface{}) error {
 	defer c.mutex.Unlock()
 
 	return c.store.Set(key, val)
+}
+
+var expRegex = regexp.MustCompile(`(.+?)\((.*?)\)`)
+
+func (c *Ctx) EvaluateExpr(expr string) (interface{}, error) {
+	vals := expRegex.FindStringSubmatch(expr)
+	if len(vals) == 0 {
+		return c.Get(expr)
+	}
+	//
+	//fun := vals[1]
+	//params := vals[2]
+
+	//strings.Split(params, ",")
+
+	return nil, nil
 }
 
 func (c *Ctx) Evaluate(data *interface{}) (interface{}, error) {
